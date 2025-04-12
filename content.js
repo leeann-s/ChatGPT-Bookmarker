@@ -4,7 +4,7 @@ let bookmarks = [];
 // Create and inject bookmark button for each ChatGPT response
 function injectBookmarkButtons() {
     // Select all ChatGPT response containers that don't have bookmark buttons yet
-    const responses = document.querySelectorAll('.markdown.prose.w-full:not(.bookmarker-processed)');
+    const responses = document.querySelectorAll('.markdown');
     
     responses.forEach((response) => {
         // Mark as processed
@@ -68,21 +68,27 @@ function updateNavigationPanel(panel) {
 
 // Initialize the extension
 function init() {
-    createNavigationPanel();
-    
-    // Watch for new responses (ChatGPT dynamically adds content)
-    const observer = new MutationObserver(() => {
-        injectBookmarkButtons();
-    });
-    
-    // Start observing the chat container
-    const chatContainer = document.querySelector('#__next');
-    if (chatContainer) {
-        observer.observe(chatContainer, { 
-            childList: true, 
-            subtree: true 
-        });
-    }
+    // Wait for the chat interface to load
+    const checkForChat = setInterval(() => {
+        const chatContainer = document.querySelector('main');
+        if (chatContainer) {
+            clearInterval(checkForChat);
+            createNavigationPanel();
+            
+            // Watch for new responses
+            const observer = new MutationObserver(() => {
+                injectBookmarkButtons();
+            });
+            
+            observer.observe(chatContainer, { 
+                childList: true, 
+                subtree: true 
+            });
+            
+            // Initial injection of buttons
+            injectBookmarkButtons();
+        }
+    }, 1000);
 }
 
 // Start the extension
