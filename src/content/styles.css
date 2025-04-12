@@ -106,6 +106,10 @@
     opacity: 1;
 }
 
-.collapse-btn-container:hover {
+.collapse-button {
+    color: rgb(103, 101, 101);
+}
+
+.collapse-button:hover {
     color: black;
 }
