@@ -115,20 +115,50 @@ function createNavigationPanel() {
 function updateNavigationPanel() {
     const panel = document.querySelector('.bookmark-navigation-panel');
     if (!panel) return;
-    
+
     const bookmarkList = panel.querySelector('.bookmark-list');
     bookmarkList.innerHTML = '';
-    
+
     bookmarks.forEach((bookmark, index) => {
         const bookmarkItem = document.createElement('div');
         bookmarkItem.className = 'bookmark-item';
-        bookmarkItem.textContent = `${index + 1}. ${bookmark.text}`;
-        bookmarkItem.addEventListener('click', () => {
+        bookmarkItem.style.display = 'flex';
+        bookmarkItem.style.justifyContent = 'space-between';
+        bookmarkItem.style.alignItems = 'center';
+        bookmarkItem.style.padding = '4px 0';
+
+        const textSpan = document.createElement('span');
+        textSpan.textContent = `${index + 1}. ${bookmark.text}`;
+        textSpan.style.cursor = 'pointer';
+        textSpan.addEventListener('click', () => {
             bookmark.element.scrollIntoView({ behavior: 'smooth' });
         });
+
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = '❌';
+        removeBtn.title = 'Remove bookmark';
+        removeBtn.style.marginLeft = '8px';
+        removeBtn.style.cursor = 'pointer';
+        removeBtn.style.border = 'none';
+        removeBtn.style.background = 'transparent';
+
+        removeBtn.addEventListener('click', () => {
+            // Remove from bookmarks list
+            bookmarks = bookmarks.filter(b => b !== bookmark);
+
+            // Remove bookmark style on the original 🔖 button if it's still in DOM
+            const btn = bookmark.element.querySelector('.chatgpt-bookmark-btn');
+            if (btn) btn.classList.remove('bookmarked');
+
+            updateNavigationPanel();
+        });
+
+        bookmarkItem.appendChild(textSpan);
+        bookmarkItem.appendChild(removeBtn);
         bookmarkList.appendChild(bookmarkItem);
     });
 }
+
 
 // Initialize the extension
 async function init() {
