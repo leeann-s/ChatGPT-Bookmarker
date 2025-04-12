@@ -159,8 +159,6 @@ function createNavigationPanel() {
         updateNavigationPanel();
     });
     
-
-    //panel.removeChild(collapseBtn);
     panel.appendChild(collapseBtn);
 
     return panel;
