@@ -255,12 +255,7 @@ function createNavigationPanel() {
 
         updateNavigationPanel();
     });
-<<<<<<< HEAD
     // Attach collapse button to header push
-=======
-    
-    // Attach collapse button to header
->>>>>>> 70873ab (subparts)
     panel.querySelector('.collapse-btn-container').appendChild(collapseBtn);
     
     // Add Clear All button
