@@ -4,31 +4,36 @@
     "version": "1.0.0",
     "description": "Bookmark and quickly navigate to specific responses in ChatGPT conversations",
     "permissions": [
-        "activeTab",
-        "scripting",
         "storage",
-        "tabs"
+        "tabs",
+        "scripting"
     ],
-    "action": {
-        "default_popup": "src/popup/popup.html",
-        "default_icon": {
-            "16": "src/assets/icons/icon16.png",
-            "48": "src/assets/icons/icon48.png",
-            "128": "src/assets/icons/icon128.png"
-        }
-    },
     "host_permissions": [
         "https://chat.openai.com/*",
         "https://chatgpt.com/*"
     ],
+    "content_scripts": [
+        {
+            "matches": [
+                "https://chat.openai.com/*",
+                "https://chatgpt.com/*"
+            ],
+            "css": ["content/styles.css"],
+            "js": ["content/content.js"],
+            "run_at": "document_idle",
+            "world": "MAIN"
+        }
+    ],
     "web_accessible_resources": [{
-        "resources": [
-            "src/content/*",
-            "src/assets/*"
-        ],
+        "resources": ["content/*"],
         "matches": [
             "https://chat.openai.com/*",
             "https://chatgpt.com/*"
         ]
-    }]
+    }],
+    "icons": {
+        "16": "src/assets/icons/icon16.png",
+        "48": "src/assets/icons/icon48.png",
+        "128": "src/assets/icons/icon128.png"
+    }
 }
