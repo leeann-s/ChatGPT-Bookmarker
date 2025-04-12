@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat with Bookmarks</title>
+  <style>
+    body { font-family: Arial, sans-serif; display: flex; }
+    #chat { flex: 2; padding: 10px; border-right: 1px solid #ccc; }
+    .message { margin-bottom: 10px; position: relative; padding-right: 30px; }
+    .bookmark-btn {
+      position: absolute; right: 5px; top: 5px;
+      cursor: pointer; color: gold;
+    }
+    #bookmarks { flex: 1; padding: 10px; }
+    .bookmark-preview { cursor: pointer; color: blue; text-decoration: underline; margin-bottom: 5px; }
+  </style>
+</head>
+<body>
+  <div id="chat">
+    <!-- Sample messages -->
+    <div class="message" id="msg1">What is backpropagation? <span class="bookmark-btn">⭐</span></div>
+    <div class="message" id="msg2">Backpropagation is an algorithm for training neural nets. <span class="bookmark-btn">⭐</span></div>
+    <div class="message" id="msg3">Oh I see. Can you explain how gradients work? <span class="bookmark-btn">⭐</span></div>
+  </div>
+
+  <div id="bookmarks">
+    <h3>Bookmarks</h3>
+    <div id="bookmark-list"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
