@@ -1,5 +1,6 @@
 // Track bookmarked messages
 let bookmarks = [];
+let listVisible = true;
 
 // Helper function to wait for elements to appear
 function waitForElement(selector, timeout = 5000) {
@@ -131,8 +132,39 @@ function createNavigationPanel() {
     `;
     
     document.body.appendChild(panel);
+
+    const collapseBtn = document.createElement('button');
+    collapseBtn.textContent = 'Collapse List ▲';
+    collapseBtn.style.color = 'black'; // or any color like 'white', '#fff', 'red', etc.
+    collapseBtn.title = 'Collapse List';
+    collapseBtn.style.marginLeft = '8px';
+    collapseBtn.style.cursor = 'pointer';
+    collapseBtn.style.border = 'none';
+    collapseBtn.style.background = 'transparent';
+
+
+    collapseBtn.addEventListener('click', () => {
+        listVisible = !listVisible; // toggle the state
+    
+        if (listVisible) {
+            panel.style.height = 'auto';
+            collapseBtn.textContent = 'Collapse List ▲';
+            collapseBtn.title = 'Collapse List';
+        } else {
+            panel.style.height = '90px';
+            collapseBtn.textContent = 'Expand List ▼';
+            collapseBtn.title = 'Expand List';
+        }
+    
+        updateNavigationPanel();
+    });
+    
+
+    //panel.removeChild(collapseBtn);
+    panel.appendChild(collapseBtn);
+
     return panel;
-}
+} 
 
 // Update navigation panel
 function updateNavigationPanel() {
@@ -141,7 +173,9 @@ function updateNavigationPanel() {
 
     const bookmarkList = panel.querySelector('.bookmark-list');
     bookmarkList.innerHTML = '';
-    
+    bookmarkList.style.visibility = listVisible ? 'visible' : 'hidden';
+    bookmarkList.style.display = listVisible ? 'block' : 'none';
+
     // Add a scroller class to the bookmark list
     bookmarkList.className = 'bookmark-list bookmark-scroller';
 
