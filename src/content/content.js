@@ -176,7 +176,7 @@ function updateNavigationPanel() {
     bookmarkList.style.visibility = listVisible ? 'visible' : 'hidden';
     bookmarkList.style.display = listVisible ? 'block' : 'none';
 
-    // Add a scroller class to the bookmark list
+    // Add a scroller class to the bookmark list lol
     bookmarkList.className = 'bookmark-list bookmark-scroller';
 
     bookmarks.forEach((bookmark, index) => {
