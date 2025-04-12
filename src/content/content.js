@@ -141,6 +141,7 @@ function createNavigationPanel() {
     collapseBtn.style.cursor = 'pointer';
     collapseBtn.style.border = 'none';
     collapseBtn.style.background = 'transparent';
+    collapseBtn.alignItems = 'left';
 
 
     collapseBtn.addEventListener('click', () => {
