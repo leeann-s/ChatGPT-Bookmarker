@@ -90,10 +90,12 @@ function injectBookmarkButtons() {
                     ? lastUserMessage.substring(0, 50) + '...'
                     : 'User question not found';
 
+                // Add a custom name field that initially matches the question preview
                 bookmarks.push({
                     element: message,
                     position: message.offsetTop,
-                    text: questionPreview
+                    text: questionPreview,
+                    customName: questionPreview // Add customName property
                 });
 
             } else {
@@ -114,7 +116,6 @@ function injectBookmarkButtons() {
         message.insertAdjacentElement('afterbegin', bookmarkContainer);
     });
 }
-
 
 // Create floating navigation panel
 function createNavigationPanel() {
@@ -140,6 +141,9 @@ function updateNavigationPanel() {
 
     const bookmarkList = panel.querySelector('.bookmark-list');
     bookmarkList.innerHTML = '';
+    
+    // Add a scroller class to the bookmark list
+    bookmarkList.className = 'bookmark-list bookmark-scroller';
 
     bookmarks.forEach((bookmark, index) => {
         const bookmarkItem = document.createElement('div');
@@ -149,22 +153,57 @@ function updateNavigationPanel() {
         bookmarkItem.style.alignItems = 'center';
         bookmarkItem.style.padding = '4px 0';
 
+        // Create the text display element
         const textSpan = document.createElement('span');
-        textSpan.textContent = `${index + 1}. ${bookmark.text}`;
+        textSpan.className = 'bookmark-text';
+        textSpan.textContent = `${index + 1}. ${bookmark.customName || bookmark.text}`;
         textSpan.style.cursor = 'pointer';
+        textSpan.style.flex = '1';
+        textSpan.style.overflow = 'hidden';
+        textSpan.style.textOverflow = 'ellipsis';
+        textSpan.style.whiteSpace = 'nowrap';
         textSpan.addEventListener('click', () => {
             bookmark.element.scrollIntoView({ behavior: 'smooth' });
         });
 
+        // Create edit (pencil) button
+        const editBtn = document.createElement('button');
+        editBtn.innerHTML = '✏️';
+        editBtn.className = 'bookmark-edit-btn';
+        editBtn.title = 'Rename bookmark';
+        editBtn.style.marginLeft = '4px';
+        editBtn.style.cursor = 'pointer';
+        editBtn.style.border = 'none';
+        editBtn.style.background = 'transparent';
+        editBtn.style.fontSize = '12px';
+        editBtn.style.padding = '2px';
+
+        editBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            // Create input field for renaming
+            const newName = prompt('Enter new name for this bookmark:', bookmark.customName || bookmark.text);
+            
+            // Update if not cancelled and not empty
+            if (newName !== null && newName.trim() !== '') {
+                bookmark.customName = newName.trim();
+                updateNavigationPanel();
+            }
+        });
+
+        // Remove bookmark button
         const removeBtn = document.createElement('button');
         removeBtn.textContent = '✖';
         removeBtn.title = 'Remove bookmark';
-        removeBtn.style.marginLeft = '8px';
+        removeBtn.style.marginLeft = '4px';
         removeBtn.style.cursor = 'pointer';
         removeBtn.style.border = 'none';
         removeBtn.style.background = 'transparent';
+        removeBtn.style.fontSize = '12px';
+        removeBtn.style.padding = '2px';
 
-        removeBtn.addEventListener('click', () => {
+        removeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             // Remove from bookmarks list
             bookmarks = bookmarks.filter(b => b !== bookmark);
 
@@ -175,12 +214,17 @@ function updateNavigationPanel() {
             updateNavigationPanel();
         });
 
+        // Add all elements to bookmark item
         bookmarkItem.appendChild(textSpan);
+        bookmarkItem.appendChild(editBtn);
         bookmarkItem.appendChild(removeBtn);
         bookmarkList.appendChild(bookmarkItem);
     });
-}
 
+    // Auto-scroll to the bottom of the bookmark list
+    bookmarkList.scrollTop = bookmarkList.scrollHeight;
+
+}
 
 // Initialize the extension
 async function init() {
@@ -228,4 +272,4 @@ if (document.readyState === 'loading') {
 }
 
 // Add a message to verify the script is loaded
-console.log('ChatGPT Bookmarker script loaded'); 
+console.log('ChatGPT Bookmarker script loaded');

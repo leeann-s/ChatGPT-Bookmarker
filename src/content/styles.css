@@ -30,7 +30,7 @@
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     padding: 10px;
-    width: 200px;
+    width: 250px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     z-index: 10000;
 }
@@ -45,8 +45,29 @@
 
 .bookmark-list {
     color: black;
-    max-height: 300px;
+}
+
+/* New scrollable container styles */
+.bookmark-scroller {
+    max-height: 150px; /* Approximately height for 3 bookmark items */
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+/* Webkit scrollbar styles */
+.bookmark-scroller::-webkit-scrollbar {
+    width: 6px;
+}
+
+.bookmark-scroller::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.bookmark-scroller::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 3px;
 }
 
 .bookmark-item {
@@ -55,8 +76,32 @@
     color: black;
     border-radius: 4px;
     transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
 }
 
 .bookmark-item:hover {
     background-color: #f3f4f6;
-} 
+}
+
+.bookmark-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bookmark-edit-btn {
+    font-size: 12px;
+    margin-left: 4px;
+    padding: 2px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.bookmark-edit-btn:hover {
+    opacity: 1;
+}
