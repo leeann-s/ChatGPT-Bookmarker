@@ -214,87 +214,176 @@ function injectSubpartBookmarks(message) {
 
 // Create floating navigation panel
 function createNavigationPanel() {
-    if (document.querySelector('.bookmark-navigation-panel')) return;
-
+    if (document.querySelector('.bookmark-navigation-panel')) {
+        return;
+    }
+    
     const panel = document.createElement('div');
     panel.className = 'bookmark-navigation-panel';
-    panel.style.cssText = `
-        position: fixed;
-        right: 20px;
-        top: 100px;
-        width: 300px;
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        padding: 12px;
-        z-index: 10000;
-    `;
     
+    // Create the header with collapse button
     const header = document.createElement('div');
     header.className = 'bookmark-nav-header';
-    header.style.display = 'flex';
-    header.style.justifyContent = 'space-between';
-    header.innerHTML = `<span>Bookmarks</span>`;
-    
-    const collapseBtn = document.createElement('button');
-    collapseBtn.className = 'collapse-button';
-    collapseBtn.textContent = 'Collapse ▲';
-    collapseBtn.style.border = 'none';
-    collapseBtn.style.background = 'transparent';
-    collapseBtn.style.cursor = 'pointer';
-    collapseBtn.addEventListener('click', () => {
-        listVisible = !listVisible; // toggle the state
-    
-        if (listVisible) {
-            panel.style.height = 'auto';
-            collapseBtn.textContent = 'Collapse ▲';
-            collapseBtn.title = 'Collapse List';
-        } else {
-            collapseBtn.textContent = 'Expand ▼';
-            collapseBtn.title = 'Expand List';
-            panel.style.height = '63px';
-        }
-    });
-
-    /*const actions = document.createElement('div');
-    actions.className = 'bookmark-actions';
-    actions.style.cssText = 'display: flex; justify-content: flex-end; margin: 8px 0;';*/
-
-    // Move Clear All button outside of actions and directly into the panel
-    const clearAllBtn = document.createElement('button');
-    clearAllBtn.className = 'clear-all-btn';
-    clearAllBtn.textContent = 'Clear All';
-    clearAllBtn.style.cssText = `
-        background: #f3f4f6;
-        border: 1px solid #e5e7eb;
-        border-radius: 4px;
-        padding: 4px 8px;
-        font-size: 12px;
-        cursor: pointer;
+    header.innerHTML = `
+        <span>Bookmarks</span>
+        <button class="collapse-button">▼</button>
     `;
-    clearAllBtn.addEventListener('click', () => {
-        if (bookmarks.length === 0) return;
-        if (confirm('Are you sure you want to clear all bookmarks?')) {
-            document.querySelectorAll('.bookmarked').forEach(btn => {
-                btn.classList.remove('bookmarked');
-                btn.style.opacity = '0';
-            });
-            bookmarks = [];
-            updateNavigationPanel();
-        }
-    });
 
-    const list = document.createElement('div');
-    list.className = 'bookmark-list';
-
-    header.appendChild(collapseBtn);
+    // Create actions bar with delete all button
+    const actions = document.createElement('div');
+    actions.className = 'bookmark-actions';
+    const deleteAllBtn = document.createElement('button');
+    deleteAllBtn.className = 'delete-all-btn';
+    deleteAllBtn.textContent = 'Delete All';
+    actions.appendChild(deleteAllBtn);
+    
+    // Create the bookmark list container
+    const bookmarkList = document.createElement('div');
+    bookmarkList.className = 'bookmark-list';
+    
+    // Create resize handle
+    const resizeHandle = document.createElement('div');
+    resizeHandle.className = 'resize-handle';
+    
+    // Assemble the panel
     panel.appendChild(header);
-    panel.appendChild(clearAllBtn); // Add Clear All button directly to the panel
-    panel.appendChild(list);
+    panel.appendChild(actions);
+    panel.appendChild(bookmarkList);
+    panel.appendChild(resizeHandle);
     document.body.appendChild(panel);
 
-    updateNavigationPanel();
+    // Collapse functionality
+    let isCollapsed = false;
+    const collapseBtn = header.querySelector('.collapse-button');
+    const contentToToggle = [actions, bookmarkList];
+
+    collapseBtn.addEventListener('click', () => {
+        isCollapsed = !isCollapsed;
+        collapseBtn.textContent = isCollapsed ? '▲' : '▼';
+        contentToToggle.forEach(el => {
+            el.style.display = isCollapsed ? 'none' : 'block';
+        });
+        if (isCollapsed) {
+            panel.style.height = header.offsetHeight + 'px';
+        } else {
+            panel.style.height = 'auto';
+        }
+    });
+
+    // Delete all functionality
+    deleteAllBtn.addEventListener('click', () => {
+        // Remove all bookmark indicators
+        document.querySelectorAll('.chatgpt-bookmark-btn.bookmarked').forEach(btn => {
+            btn.classList.remove('bookmarked');
+        });
+        // Clear bookmarks array
+        bookmarks = [];
+        updateNavigationPanel();
+    });
+
+    // Dragging functionality
+    let isDragging = false;
+    let startX, startY, initialX, initialY;
+
+    header.addEventListener('mousedown', startDragging);
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', stopDragging);
+
+    function startDragging(e) {
+        isDragging = true;
+        startX = e.clientX - panel.offsetLeft;
+        startY = e.clientY - panel.offsetTop;
+        header.style.cursor = 'grabbing';
+    }
+
+    function drag(e) {
+        if (!isDragging) return;
+
+        e.preventDefault();
+        
+        // Calculate new position
+        let newX = e.clientX - startX;
+        let newY = e.clientY - startY;
+        
+        // Keep within viewport bounds
+        newX = Math.max(0, Math.min(newX, window.innerWidth - panel.offsetWidth));
+        newY = Math.max(0, Math.min(newY, window.innerHeight - panel.offsetHeight));
+        
+        panel.style.left = newX + 'px';
+        panel.style.top = newY + 'px';
+        panel.style.right = 'auto'; // Remove default right positioning
+    }
+
+    function stopDragging() {
+        isDragging = false;
+        header.style.cursor = 'grab';
+    }
+
+    // Modified resize functionality
+    let isResizing = false;
+    let originalWidth, originalHeight, originalX, originalY;
+
+    resizeHandle.addEventListener('mousedown', startResizing);
+    document.addEventListener('mousemove', resize);
+    document.addEventListener('mouseup', stopResizing);
+
+    function startResizing(e) {
+        if (isCollapsed) return; // Prevent resizing when collapsed
+        isResizing = true;
+        originalWidth = panel.offsetWidth;
+        originalHeight = panel.offsetHeight;
+        originalX = e.clientX;
+        originalY = e.clientY;
+        e.stopPropagation();
+    }
+
+    function resize(e) {
+        if (!isResizing) return;
+
+        const width = originalWidth + (e.clientX - originalX);
+        const height = originalHeight + (e.clientY - originalY);
+
+        // Calculate content height (header + actions + visible bookmarks)
+        const headerHeight = header.offsetHeight;
+        const actionsHeight = actions.offsetHeight;
+        const visibleBookmarksHeight = Array.from(bookmarkList.children)
+            .reduce((total, item) => total + item.offsetHeight, 0);
+        const minContentHeight = headerHeight + actionsHeight + visibleBookmarksHeight;
+
+        // Enforce minimum and maximum sizes
+        const newWidth = Math.max(150, Math.min(width, window.innerWidth - panel.offsetLeft));
+        const newHeight = Math.max(minContentHeight, Math.min(height, window.innerHeight - panel.offsetTop));
+
+        panel.style.width = newWidth + 'px';
+        panel.style.height = newHeight + 'px';
+    }
+
+    function stopResizing() {
+        isResizing = false;
+    }
+
+    // Save position and size
+    window.addEventListener('beforeunload', () => {
+        localStorage.setItem('bookmarkPanelState', JSON.stringify({
+            left: panel.offsetLeft,
+            top: panel.offsetTop,
+            width: panel.offsetWidth,
+            height: panel.offsetHeight
+        }));
+    });
+
+    // Restore position and size
+    const savedState = localStorage.getItem('bookmarkPanelState');
+    if (savedState) {
+        const state = JSON.parse(savedState);
+        panel.style.left = state.left + 'px';
+        panel.style.top = state.top + 'px';
+        panel.style.width = state.width + 'px';
+        panel.style.height = state.height + 'px';
+        panel.style.right = 'auto';
+    }
+
+    return panel;
 }
 
 
