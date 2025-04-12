@@ -137,13 +137,13 @@ function createNavigationPanel() {
     document.body.appendChild(panel);
 
     const collapseBtn = document.createElement('button');
-    collapseBtn.textContent = 'Collapse ▲';
-    collapseBtn.style.color = 'black'; // or any color like 'white', '#fff', 'red', etc.
+    collapseBtn.textContent = 'Collapse ▲'; // or any color like 'white', '#fff', 'red', etc.
     collapseBtn.title = 'Collapse';
     collapseBtn.style.marginLeft = '0px';
     collapseBtn.style.cursor = 'pointer';
     collapseBtn.style.border = 'none';
     collapseBtn.style.background = 'transparent';
+    collapseBtn.className = 'collapse-button';
 
 
     collapseBtn.addEventListener('click', () => {
