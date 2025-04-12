@@ -135,7 +135,7 @@ function updateNavigationPanel() {
         });
 
         const removeBtn = document.createElement('button');
-        removeBtn.textContent = '❌';
+        removeBtn.textContent = '✖';
         removeBtn.title = 'Remove bookmark';
         removeBtn.style.marginLeft = '8px';
         removeBtn.style.cursor = 'pointer';
