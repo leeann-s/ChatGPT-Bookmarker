@@ -161,7 +161,7 @@ function createNavigationPanel() {
 
         updateNavigationPanel();
     });
-    // Attach collapse button to header
+    // Attach collapse button to header push
     panel.querySelector('.collapse-btn-container').appendChild(collapseBtn);
 
     return panel;
