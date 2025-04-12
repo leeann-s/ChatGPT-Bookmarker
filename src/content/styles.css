@@ -105,3 +105,7 @@
 .bookmark-edit-btn:hover {
     opacity: 1;
 }
+
+.collapse-btn-container:hover {
+    color: black;
+}

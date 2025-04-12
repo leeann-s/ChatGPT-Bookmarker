@@ -6,22 +6,22 @@ let listVisible = true;
 function waitForElement(selector, timeout = 5000) {
     return new Promise((resolve, reject) => {
         const startTime = Date.now();
-        
+
         const checkElement = () => {
             const element = document.querySelector(selector);
             if (element) {
                 resolve(element);
                 return;
             }
-            
+
             if (Date.now() - startTime > timeout) {
                 reject(new Error(`Timeout waiting for ${selector}`));
                 return;
             }
-            
+
             requestAnimationFrame(checkElement);
         };
-        
+
         checkElement();
     });
 }
@@ -30,7 +30,7 @@ function injectBookmarkButtons() {
     // Try to find all message containers
     const messages = document.querySelectorAll('div[class*="prose"]');
     console.log('Found messages:', messages.length);
-    
+
     messages.forEach((message) => {
         // Skip if already processed
         if (message.classList.contains('bookmarker-processed')) {
@@ -123,46 +123,49 @@ function createNavigationPanel() {
     if (document.querySelector('.bookmark-navigation-panel')) {
         return;
     }
-    
+
     const panel = document.createElement('div');
     panel.className = 'bookmark-navigation-panel';
     panel.innerHTML = `
-        <div class="bookmark-nav-header">Bookmarks</div>
-        <div class="bookmark-list"></div>
-    `;
-    
+    <div class="bookmark-nav-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <span>Bookmarks</span>
+        <span class="collapse-btn-container"></span>
+    </div>
+    <div class="bookmark-list"></div>
+`;
+
     document.body.appendChild(panel);
 
     const collapseBtn = document.createElement('button');
-    collapseBtn.textContent = 'Collapse List ▲';
-    collapseBtn.style.color = 'black'; // or any color like 'white', '#fff', 'red', etc.
-    collapseBtn.title = 'Collapse List';
-    collapseBtn.style.marginLeft = '8px';
+    collapseBtn.textContent = 'Collapse ▲'; // or any color like 'white', '#fff', 'red', etc.
+    collapseBtn.title = 'Collapse';
+    collapseBtn.style.marginLeft = '0px';
     collapseBtn.style.cursor = 'pointer';
     collapseBtn.style.border = 'none';
     collapseBtn.style.background = 'transparent';
+    collapseBtn.className = 'collapse-button';
 
 
     collapseBtn.addEventListener('click', () => {
         listVisible = !listVisible; // toggle the state
-    
+
         if (listVisible) {
             panel.style.height = 'auto';
-            collapseBtn.textContent = 'Collapse List ▲';
-            collapseBtn.title = 'Collapse List';
+            collapseBtn.textContent = 'Collapse ▲';
+            collapseBtn.title = 'Collapse';
         } else {
-            panel.style.height = '90px';
-            collapseBtn.textContent = 'Expand List ▼';
-            collapseBtn.title = 'Expand List';
+            panel.style.height = '63px';
+            collapseBtn.textContent = 'Expand ▼';
+            collapseBtn.title = 'Expand';
         }
-    
+
         updateNavigationPanel();
     });
-    
-    panel.appendChild(collapseBtn);
+    // Attach collapse button to header
+    panel.querySelector('.collapse-btn-container').appendChild(collapseBtn);
 
     return panel;
-} 
+}
 
 // Update navigation panel
 function updateNavigationPanel() {
@@ -212,10 +215,10 @@ function updateNavigationPanel() {
 
         editBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            
+
             // Create input field for renaming
             const newName = prompt('Enter new name for this bookmark:', bookmark.customName || bookmark.text);
-            
+
             // Update if not cancelled and not empty
             if (newName !== null && newName.trim() !== '') {
                 bookmark.customName = newName.trim();
@@ -261,17 +264,17 @@ function updateNavigationPanel() {
 // Initialize the extension
 async function init() {
     console.log('ChatGPT Bookmarker initializing...');
-    
+
     try {
         // Wait for the main chat container
         await waitForElement('div[class*="prose"]');
-        
+
         // Create navigation panel
         createNavigationPanel();
-        
+
         // Initial injection of bookmark buttons
         injectBookmarkButtons();
-        
+
         // Set up observer for new messages
         const observer = new MutationObserver((mutations) => {
             for (const mutation of mutations) {
@@ -280,7 +283,7 @@ async function init() {
                 }
             }
         });
-        
+
         // Start observing the chat container
         const chatContainer = document.querySelector('main');
         if (chatContainer) {
@@ -289,7 +292,7 @@ async function init() {
                 subtree: true
             });
         }
-        
+
         console.log('ChatGPT Bookmarker initialized successfully');
     } catch (error) {
         console.error('Error initializing ChatGPT Bookmarker:', error);
