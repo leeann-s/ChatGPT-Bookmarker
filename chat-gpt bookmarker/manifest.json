@@ -1,0 +1,20 @@
+{
+    "manifest_version": 3,
+    "name": "ChatGPT Message Bookmarker",
+    "version": "1.0",
+    "description": "Add bookmarks to ChatGPT conversation messages and jump back to them later.",
+    "permissions": ["storage", "scripting"],
+    "host_permissions": ["https://chat.openai.com/*"],
+    "content_scripts": [
+      {
+        "matches": ["https://chat.openai.com/*"],
+        "js": ["content.js"],
+        "run_at": "document_idle"
+      }
+    ],
+    "icons": {
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  }
+  
