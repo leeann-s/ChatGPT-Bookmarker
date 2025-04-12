@@ -137,7 +137,7 @@ function createNavigationPanel() {
     collapseBtn.textContent = 'Collapse List ▲';
     collapseBtn.style.color = 'black'; // or any color like 'white', '#fff', 'red', etc.
     collapseBtn.title = 'Collapse List';
-    collapseBtn.style.marginLeft = '8px';
+    collapseBtn.style.marginLeft = '0px';
     collapseBtn.style.cursor = 'pointer';
     collapseBtn.style.border = 'none';
     collapseBtn.style.background = 'transparent';
