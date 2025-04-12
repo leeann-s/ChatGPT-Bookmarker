@@ -1,5 +1,6 @@
 // Track bookmarked messages
 let bookmarks = [];
+let listVisible = true;
 
 // Helper function to wait for elements to appear
 function waitForElement(selector, timeout = 5000) {
@@ -25,6 +26,7 @@ function waitForElement(selector, timeout = 5000) {
     });
 }
 
+// Create and inject bookmark button for each ChatGPT response
 function injectBookmarkButtons() {
     // Try to find all message containers
     const messages = document.querySelectorAll('div[class*="prose"]');
@@ -35,18 +37,18 @@ function injectBookmarkButtons() {
         if (message.classList.contains('bookmarker-processed')) {
             return;
         }
-
+        
         // Skip if it's not an assistant message
         const isAssistantMessage = message.closest('div[data-message-author-role="assistant"]');
         if (!isAssistantMessage) {
             return;
         }
-
+        
         console.log('Processing message:', message);
-
+        
         // Mark as processed
         message.classList.add('bookmarker-processed');
-
+        
         // Create bookmark container
         const bookmarkContainer = document.createElement('div');
         bookmarkContainer.className = 'bookmark-container';
@@ -57,64 +59,41 @@ function injectBookmarkButtons() {
             padding: 8px;
             z-index: 1000;
         `;
-
+        
         // Create bookmark button
         const bookmarkBtn = document.createElement('button');
         bookmarkBtn.className = 'chatgpt-bookmark-btn';
         bookmarkBtn.innerHTML = '🔖';
         bookmarkBtn.title = 'Bookmark this response';
-
+        
         // Add click handler
         bookmarkBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             const isBookmarked = bookmarkBtn.classList.contains('bookmarked');
-
             if (!isBookmarked) {
                 bookmarkBtn.classList.add('bookmarked');
-
-                // Get all messages (in order of appearance)
-                const allMessages = Array.from(document.querySelectorAll('div[data-message-author-role="user"], div[data-message-author-role="assistant"]'));
-
-                // Find the index of this assistant message
-                const index = allMessages.findIndex(msg => msg.contains(message));
-
-                let lastUserMessage = '';
-                for (let i = index - 1; i >= 0; i--) {
-                    if (allMessages[i].dataset.messageAuthorRole === 'user') {
-                        lastUserMessage = allMessages[i].textContent.trim();
-                        break;
-                    }
-                }
-
-                const questionPreview = lastUserMessage
-                    ? lastUserMessage.substring(0, 50) + '...'
-                    : 'User question not found';
-
                 bookmarks.push({
                     element: message,
                     position: message.offsetTop,
-                    text: questionPreview
+                    text: message.textContent.substring(0, 50) + '...'
                 });
-
             } else {
                 bookmarkBtn.classList.remove('bookmarked');
                 bookmarks = bookmarks.filter(b => b.element !== message);
             }
-
             updateNavigationPanel();
         });
-
+        
         // Add button to container
         bookmarkContainer.appendChild(bookmarkBtn);
-
+        
         // Make sure the message container is properly positioned
         message.style.position = 'relative';
-
+        
         // Insert container at the start of the message
         message.insertAdjacentElement('afterbegin', bookmarkContainer);
     });
 }
-
 
 // Create floating navigation panel
 function createNavigationPanel() {
@@ -130,8 +109,40 @@ function createNavigationPanel() {
     `;
     
     document.body.appendChild(panel);
+
+    const collapseBtn = document.createElement('button');
+    collapseBtn.textContent = 'Collapse List ▲';
+    collapseBtn.style.color = 'black'; // or any color like 'white', '#fff', 'red', etc.
+    collapseBtn.title = 'Collapse List';
+    collapseBtn.style.marginLeft = '8px';
+    collapseBtn.style.cursor = 'pointer';
+    collapseBtn.style.border = 'none';
+    collapseBtn.style.background = 'transparent';
+
+
+    collapseBtn.addEventListener('click', () => {
+        listVisible = !listVisible; // toggle the state
+    
+        if (listVisible) {
+            panel.style.height = 'auto';
+            collapseBtn.textContent = 'Collapse List ▲';
+            collapseBtn.title = 'Collapse List';
+        } else {
+            panel.style.height = '90px';
+            collapseBtn.textContent = 'Expand List ▼';
+            collapseBtn.title = 'Expand List';
+        }
+    
+        updateNavigationPanel();
+    });
+    
+
+    //panel.removeChild(collapseBtn);
+    panel.appendChild(collapseBtn);
+
     return panel;
 }
+
 
 // Update navigation panel
 function updateNavigationPanel() {
@@ -140,6 +151,9 @@ function updateNavigationPanel() {
 
     const bookmarkList = panel.querySelector('.bookmark-list');
     bookmarkList.innerHTML = '';
+    bookmarkList.style.visibility = listVisible ? 'visible' : 'hidden';
+    bookmarkList.style.display = listVisible ? 'block' : 'none';
+
 
     bookmarks.forEach((bookmark, index) => {
         const bookmarkItem = document.createElement('div');
@@ -174,6 +188,8 @@ function updateNavigationPanel() {
 
             updateNavigationPanel();
         });
+
+      
 
         bookmarkItem.appendChild(textSpan);
         bookmarkItem.appendChild(removeBtn);
