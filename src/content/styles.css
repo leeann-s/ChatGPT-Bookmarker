@@ -36,6 +36,7 @@
 }
 
 .bookmark-nav-header {
+    color: black;
     font-weight: bold;
     padding-bottom: 8px;
     border-bottom: 1px solid #e5e7eb;
@@ -43,6 +44,7 @@
 }
 
 .bookmark-list {
+    color: black;
     max-height: 300px;
     overflow-y: auto;
 }
@@ -50,6 +52,7 @@
 .bookmark-item {
     padding: 8px;
     cursor: pointer;
+    color: black;
     border-radius: 4px;
     transition: background-color 0.2s;
 }
