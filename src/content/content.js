@@ -214,55 +214,56 @@ function injectSubpartBookmarks(message) {
 
 // Create floating navigation panel
 function createNavigationPanel() {
-    if (document.querySelector('.bookmark-navigation-panel')) {
-        return;
-    }
+    if (document.querySelector('.bookmark-navigation-panel')) return;
 
     const panel = document.createElement('div');
     panel.className = 'bookmark-navigation-panel';
-    panel.innerHTML = `
-    <div class="bookmark-nav-header" style="display: flex; justify-content: space-between; align-items: center;">
-        <span>Bookmarks</span>
-        <span class="collapse-btn-container"></span>
-    </div>
-    <div class="bookmark-actions" style="display: flex; justify-content: flex-end; margin-bottom: 8px;"></div>
-    <div class="bookmark-list"></div>
-`;
-
-    document.body.appendChild(panel);
-
+    panel.style.cssText = `
+        position: fixed;
+        right: 20px;
+        top: 100px;
+        width: 300px;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 12px;
+        z-index: 10000;
+    `;
+    
+    const header = document.createElement('div');
+    header.className = 'bookmark-nav-header';
+    header.style.display = 'flex';
+    header.style.justifyContent = 'space-between';
+    header.innerHTML = `<span>Bookmarks</span>`;
+    
     const collapseBtn = document.createElement('button');
-    collapseBtn.textContent = 'Collapse ▲'; 
-    collapseBtn.title = 'Collapse';
-    collapseBtn.style.marginLeft = '0px';
-    collapseBtn.style.cursor = 'pointer';
+    collapseBtn.className = 'collapse-button';
+    collapseBtn.textContent = 'Collapse ▲';
     collapseBtn.style.border = 'none';
     collapseBtn.style.background = 'transparent';
-    collapseBtn.className = 'collapse-button';
-
+    collapseBtn.style.cursor = 'pointer';
     collapseBtn.addEventListener('click', () => {
-        listVisible = !listVisible; // toggle the state
-
-        if (listVisible) {
-            panel.style.height = 'auto';
-            collapseBtn.textContent = 'Collapse ▲';
-            collapseBtn.title = 'Collapse';
-        } else {
-            panel.style.height = '63px';
-            collapseBtn.textContent = 'Expand ▼';
-            collapseBtn.title = 'Expand';
-        }
-
-        updateNavigationPanel();
-    });
-    // Attach collapse button to header push
-    panel.querySelector('.collapse-btn-container').appendChild(collapseBtn);
+            listVisible = !listVisible; // toggle the state
     
-    // Add Clear All button
+            if (listVisible) {
+                panel.style.height = 'auto';
+                collapseBtn.textContent = 'Collapse ▲';
+                collapseBtn.title = 'Collapse List';
+            } else {
+                collapseBtn.textContent = 'Expand ▼';
+                collapseBtn.title = 'Expand List';
+                panel.style.height = '63px';
+            }
+    });
+
+    const actions = document.createElement('div');
+    actions.className = 'bookmark-actions';
+    actions.style.cssText = 'display: flex; justify-content: flex-end; margin: 8px 0;';
+
     const clearAllBtn = document.createElement('button');
     clearAllBtn.className = 'clear-all-btn';
     clearAllBtn.textContent = 'Clear All';
-    clearAllBtn.title = 'Remove all bookmarks';
     clearAllBtn.style.cssText = `
         background: #f3f4f6;
         border: 1px solid #e5e7eb;
@@ -270,41 +271,31 @@ function createNavigationPanel() {
         padding: 4px 8px;
         font-size: 12px;
         cursor: pointer;
-        transition: all 0.2s;
     `;
-    
-    clearAllBtn.addEventListener('mouseenter', () => {
-        clearAllBtn.style.background = '#e5e7eb';
-    });
-    
-    clearAllBtn.addEventListener('mouseleave', () => {
-        clearAllBtn.style.background = '#f3f4f6';
-    });
-    
     clearAllBtn.addEventListener('click', () => {
         if (bookmarks.length === 0) return;
-        
         if (confirm('Are you sure you want to clear all bookmarks?')) {
-            // Remove all bookmarked styles
-            document.querySelectorAll('.chatgpt-bookmark-btn.bookmarked').forEach(btn => {
-                btn.classList.remove('bookmarked');
-            });
-            
-            document.querySelectorAll('.subpart-bookmark-btn.bookmarked').forEach(btn => {
+            document.querySelectorAll('.bookmarked').forEach(btn => {
                 btn.classList.remove('bookmarked');
                 btn.style.opacity = '0';
             });
-            
-            // Clear bookmarks array
             bookmarks = [];
             updateNavigationPanel();
         }
     });
-    
-    // Attach clear all button to actions container
-    panel.querySelector('.bookmark-actions').appendChild(clearAllBtn);
 
-    return panel;
+    actions.appendChild(clearAllBtn);
+
+    const list = document.createElement('div');
+    list.className = 'bookmark-list';
+
+    header.appendChild(collapseBtn);
+    panel.appendChild(header);
+    panel.appendChild(actions);
+    panel.appendChild(list);
+    document.body.appendChild(panel);
+
+    updateNavigationPanel();
 }
 
 // Helper function to group bookmarks by parent message
@@ -365,6 +356,12 @@ function updateNavigationPanel() {
     const clearAllBtn = panel.querySelector('.clear-all-btn');
     if (clearAllBtn) {
         clearAllBtn.style.visibility = bookmarks.length > 0 ? 'visible' : 'hidden';
+        
+        // Attach an event listener to the "Clear All" button
+        clearAllBtn.addEventListener('click', () => {
+            bookmarks = []; // Clear the bookmarks array
+            updateNavigationPanel(); // Update the panel after clearing the bookmarks
+        });
     }
 
     // Add a scroller class to the bookmark list
@@ -420,6 +417,8 @@ function createBookmarkItem(container, bookmark, index, isChild = false) {
     bookmarkItem.style.justifyContent = 'space-between';
     bookmarkItem.style.alignItems = 'center';
     bookmarkItem.style.padding = '4px 0';
+    bookmarkItem.style.paddingLeft = '20px';  // Increased left padding
+    bookmarkItem.style.paddingRight = '20px'; // Increased right padding
     
     if (isChild) {
         bookmarkItem.style.fontSize = '0.9em';

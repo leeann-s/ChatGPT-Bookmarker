@@ -1,24 +1,6 @@
-.chatgpt-bookmark-btn {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    opacity: 0.5;
-    transition: opacity 0.2s;
-    padding: 5px;
-    z-index: 9999;
-    pointer-events: auto;
-}
-
-.chatgpt-bookmark-btn:hover {
-    opacity: 1;
-}
-
 .chatgpt-bookmark-btn.bookmarked {
     opacity: 1;
+    color: #2563eb;
     color: #10a37f;
 }
 
@@ -66,13 +48,13 @@ table:hover .subpart-bookmark-btn {
 
 .bookmark-navigation-panel {
     position: fixed;
-    right: 20px;
-    top: 20px;
-    background: white;
-    border: 1px solid #e5e7eb;
+    top: 0;
+    right: 0;
+    background-color: #ffffff;
     border-radius: 8px;
     padding: 10px;
     width: 250px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     max-height: 60vh;
     overflow-y: auto;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -81,9 +63,12 @@ table:hover .subpart-bookmark-btn {
 }
 
 .bookmark-nav-header {
+    color: black;
     font-weight: bold;
     margin-bottom: 10px;
     padding-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 8px;
     border-bottom: 1px solid #e5e5e6;
     display: flex;
     justify-content: space-between;
@@ -91,16 +76,44 @@ table:hover .subpart-bookmark-btn {
 }
 
 .bookmark-list {
+    color: black;
+}
+
+/* New scrollable container styles */
+.bookmark-scroller {
+    max-height: 150px; /* Approximately height for 3 bookmark items */
     max-height: 400px;
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+/* Webkit scrollbar styles */
+.bookmark-scroller::-webkit-scrollbar {
+    width: 6px;
+}
+
+.bookmark-scroller::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.bookmark-scroller::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 3px;
     margin-top: 8px;
 }
 
 .bookmark-item {
     padding: 8px;
+    cursor: pointer;
+    color: black;
     margin-bottom: 8px;
     background: white;
     border-radius: 4px;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
     border: 1px solid #e5e5e6;
     cursor: pointer;
     transition: all 0.2s;
@@ -111,14 +124,40 @@ table:hover .subpart-bookmark-btn {
     border-color: #d1d5db;
 }
 
+.bookmark-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .child-bookmark {
     margin-bottom: 4px;
     border-color: #e5e5e6;
     background-color: #f9fafb;
 }
 
+.bookmark-edit-btn {
+    font-size: 12px;
+    margin-left: 4px;
+    padding: 2px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.bookmark-edit-btn:hover {
+    opacity: 1;
+}
+
 .parent-bookmark {
     border-left: 3px solid #10a37f;
+}
+
+.collapse-button {
+    color: rgb(103, 101, 101);
 }
 
 .empty-state {
@@ -126,6 +165,14 @@ table:hover .subpart-bookmark-btn {
     text-align: center;
     padding: 16px 0;
     font-size: 13px;
+}
+
+.collapse-button:hover {
+    color: black;
+}
+
+.clear-all-btn {
+    color: black;
 }
 
 .clear-all-btn:hover {
