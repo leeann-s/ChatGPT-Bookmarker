@@ -1,20 +1,24 @@
 {
     "manifest_version": 3,
-    "name": "ChatGPT Bookmark",
-    "version": "1.0",
-    "description": "Bookmark messages in ChatGPT conversations",
-    "permissions": ["storage", "activeTab", "scripting"],
-    "action": {
-      "default_popup": "popup.html"
-    },
-    "host_permissions": ["https://chat.openai.com/*"],
-    "background": {
-      "service_worker": "background.js"
-    },
+    "name": "ChatGPT Bookmarker",
+    "version": "1.0.0",
+    "description": "Bookmark and quickly navigate to specific responses in ChatGPT conversations",
+    "permissions": [
+      "storage"
+    ],
+    "host_permissions": [
+      "https://chat.openai.com/*"
+    ],
     "content_scripts": [
       {
         "matches": ["https://chat.openai.com/*"],
-        "js": ["content.js"]
+        "js": ["src/content/content.js"],
+        "css": ["src/content/styles.css"]
       }
-    ]
+    ],
+    "icons": {
+      "16": "src/assets/icons/icon16.png",
+      "48": "src/assets/icons/icon48.png",
+      "128": "src/assets/icons/icon128.png"
+    }
   }

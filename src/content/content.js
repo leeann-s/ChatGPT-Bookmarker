@@ -86,4 +86,4 @@ function init() {
 }
 
 // Start the extension
-init();
+init(); 

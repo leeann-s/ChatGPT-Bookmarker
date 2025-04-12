@@ -1,0 +1,57 @@
+.chatgpt-bookmark-btn {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+    padding: 5px;
+}
+
+.chatgpt-bookmark-btn:hover {
+    opacity: 1;
+}
+
+.chatgpt-bookmark-btn.bookmarked {
+    opacity: 1;
+    color: #2563eb;
+}
+
+.bookmark-navigation-panel {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 10px;
+    width: 200px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.bookmark-nav-header {
+    font-weight: bold;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 8px;
+}
+
+.bookmark-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.bookmark-item {
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.bookmark-item:hover {
+    background-color: #f3f4f6;
+} 
