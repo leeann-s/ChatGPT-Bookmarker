@@ -291,7 +291,7 @@ function createNavigationPanel() {
 
     header.appendChild(collapseBtn);
     panel.appendChild(header);
-    panel.appendChild(actions);
+    panel.appendChild(clearAllBtn);
     panel.appendChild(list);
     document.body.appendChild(panel);
 
@@ -371,7 +371,8 @@ function updateNavigationPanel() {
         const emptyState = document.createElement('div');
         emptyState.className = 'empty-state';
         emptyState.textContent = 'No bookmarks yet. Click the 🔖 icon to add bookmarks.';
-        bookmarkList.appendChild(emptyState);
+        emptyState.marginTop = '15px'
+        panel.appendChild(emptyState);
         return;
     }
 
