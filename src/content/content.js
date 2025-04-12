@@ -244,23 +244,24 @@ function createNavigationPanel() {
     collapseBtn.style.background = 'transparent';
     collapseBtn.style.cursor = 'pointer';
     collapseBtn.addEventListener('click', () => {
-            listVisible = !listVisible; // toggle the state
+        listVisible = !listVisible; // toggle the state
     
-            if (listVisible) {
-                panel.style.height = 'auto';
-                collapseBtn.textContent = 'Collapse ▲';
-                collapseBtn.title = 'Collapse List';
-            } else {
-                collapseBtn.textContent = 'Expand ▼';
-                collapseBtn.title = 'Expand List';
-                panel.style.height = '63px';
-            }
+        if (listVisible) {
+            panel.style.height = 'auto';
+            collapseBtn.textContent = 'Collapse ▲';
+            collapseBtn.title = 'Collapse List';
+        } else {
+            collapseBtn.textContent = 'Expand ▼';
+            collapseBtn.title = 'Expand List';
+            panel.style.height = '63px';
+        }
     });
 
-    const actions = document.createElement('div');
+    /*const actions = document.createElement('div');
     actions.className = 'bookmark-actions';
-    actions.style.cssText = 'display: flex; justify-content: flex-end; margin: 8px 0;';
+    actions.style.cssText = 'display: flex; justify-content: flex-end; margin: 8px 0;';*/
 
+    // Move Clear All button outside of actions and directly into the panel
     const clearAllBtn = document.createElement('button');
     clearAllBtn.className = 'clear-all-btn';
     clearAllBtn.textContent = 'Clear All';
@@ -284,19 +285,18 @@ function createNavigationPanel() {
         }
     });
 
-    actions.appendChild(clearAllBtn);
-
     const list = document.createElement('div');
     list.className = 'bookmark-list';
 
     header.appendChild(collapseBtn);
     panel.appendChild(header);
-    panel.appendChild(clearAllBtn);
+    panel.appendChild(clearAllBtn); // Add Clear All button directly to the panel
     panel.appendChild(list);
     document.body.appendChild(panel);
 
     updateNavigationPanel();
 }
+
 
 // Helper function to group bookmarks by parent message
 function groupBookmarksByParent() {
@@ -351,12 +351,13 @@ function updateNavigationPanel() {
     bookmarkList.innerHTML = '';
     bookmarkList.style.visibility = listVisible ? 'visible' : 'hidden';
     bookmarkList.style.display = listVisible ? 'block' : 'none';
+    bookmarkList.height = bookmarks.length > 0 ? 'auto' : '0px';
 
     // Show/hide Clear All button based on bookmarks count
     const clearAllBtn = panel.querySelector('.clear-all-btn');
     if (clearAllBtn) {
         clearAllBtn.style.visibility = bookmarks.length > 0 ? 'visible' : 'hidden';
-        
+        clearAllBtn.height = bookmarks.length > 0 ? 'auto' : '0px';
         // Attach an event listener to the "Clear All" button
         clearAllBtn.addEventListener('click', () => {
             bookmarks = []; // Clear the bookmarks array
@@ -371,8 +372,13 @@ function updateNavigationPanel() {
         const emptyState = document.createElement('div');
         emptyState.className = 'empty-state';
         emptyState.textContent = 'No bookmarks yet. Click the 🔖 icon to add bookmarks.';
-        emptyState.marginTop = '15px'
-        panel.appendChild(emptyState);
+        emptyState.style.marginTop = '0px';
+        emptyState.style.textAlign = 'center';
+        emptyState.style.height = '10px'
+        emptyState.style.color = '#9ca3af';
+        emptyState.style.fontStyle = 'italic';
+    
+        bookmarkList.appendChild(emptyState); // attach to bookmarkList instead
         return;
     }
 
