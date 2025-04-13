@@ -2,6 +2,21 @@
 let bookmarks = [];
 let listVisible = true;
 
+// Helper function to reset any stuck highlights
+function resetStuckHighlights() {
+    document.querySelectorAll('div[class*="prose"]').forEach(element => {
+        if (element.style.background === 'rgba(16, 163, 127, 0.2)') {
+            element.style.background = '';
+        }
+    });
+    
+    document.querySelectorAll('p, ul, ol, pre, blockquote, h1, h2, h3, h4, h5, h6, table').forEach(element => {
+        if (element.style.background === 'rgba(16, 163, 127, 0.2)') {
+            element.style.background = '';
+        }
+    });
+}
+
 // Helper function to wait for elements to appear
 function waitForElement(selector, timeout = 5000) {
     return new Promise((resolve, reject) => {
@@ -53,7 +68,7 @@ function injectBookmarkButtons() {
         bookmarkContainer.className = 'bookmark-container';
         bookmarkContainer.style.cssText = `
             position: absolute;
-            right: 0;
+            right: -10px;
             top: 0;
             padding: 8px;
             z-index: 1000;
@@ -62,7 +77,6 @@ function injectBookmarkButtons() {
         // Create bookmark button
         const bookmarkBtn = document.createElement('button');
         bookmarkBtn.className = 'chatgpt-bookmark-btn';
-        bookmarkBtn.innerHTML = '🔖';
         bookmarkBtn.title = 'Bookmark this response';
 
         // Add click handler
@@ -128,9 +142,39 @@ function injectSubpartBookmarks(message) {
     // Find paragraphs, lists, code blocks, etc. that can be bookmarked separately
     const subparts = message.querySelectorAll('p, ul, ol, pre, blockquote, h1, h2, h3, h4, h5, h6, table');
     
+    // Get the bookmark container to check its position
+    const bookmarkContainer = message.querySelector('.bookmark-container');
+    const bookmarkContainerRect = bookmarkContainer ? bookmarkContainer.getBoundingClientRect() : null;
+    
     subparts.forEach((subpart) => {
         // Skip if already processed
         if (subpart.classList.contains('subpart-processed')) {
+            return;
+        }
+        
+        // Get the subpart's position
+        const subpartRect = subpart.getBoundingClientRect();
+        
+        // Skip if this subpart is directly next to a main bookmark button
+        if (bookmarkContainerRect) {
+            // Check if the subpart is in the same area as the bookmark container
+            const isNearBookmarkContainer = 
+                Math.abs(subpartRect.top - bookmarkContainerRect.top) < 30 && 
+                Math.abs(subpartRect.right - bookmarkContainerRect.right) < 50;
+                
+            if (isNearBookmarkContainer) {
+                return;
+            }
+        }
+        
+        // Skip if this subpart is the first child of the message (where the main bookmark is)
+        if (subpart === message.firstElementChild || 
+            (message.firstElementChild && message.firstElementChild.contains(subpart))) {
+            return;
+        }
+        
+        // Skip if this subpart is within the first 50px from the top of the message
+        if (subpartRect.top - message.getBoundingClientRect().top < 50) {
             return;
         }
         
@@ -145,29 +189,32 @@ function injectSubpartBookmarks(message) {
         // Create subpart bookmark button (smaller than the main bookmark)
         const subpartBtn = document.createElement('button');
         subpartBtn.className = 'subpart-bookmark-btn';
-        subpartBtn.innerHTML = '🔖';
         subpartBtn.title = 'Bookmark this section';
-        subpartBtn.style.cssText = `
-            position: absolute;
-            right: -25px;
-            top: 0;
-            background: none;
-            border: none;
-            font-size: 16px;
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.2s;
-            padding: 2px;
-            z-index: 9999;
-        `;
         
         // Show button on hover
         subpart.addEventListener('mouseenter', () => {
-            subpartBtn.style.opacity = '0.7';
+            if (!subpartBtn.classList.contains('bookmarked')) {
+                subpartBtn.style.opacity = '0.7';
+            }
         });
         
-        subpart.addEventListener('mouseleave', () => {
+        subpart.addEventListener('mouseleave', (e) => {
+            // Check if we're not hovering over the button itself
+            if (!subpartBtn.contains(e.relatedTarget) && !subpartBtn.classList.contains('bookmarked')) {
+                subpartBtn.style.opacity = '0';
+            }
+        });
+        
+        // Add hover handler for the button itself
+        subpartBtn.addEventListener('mouseenter', () => {
             if (!subpartBtn.classList.contains('bookmarked')) {
+                subpartBtn.style.opacity = '1';
+            }
+        });
+        
+        subpartBtn.addEventListener('mouseleave', (e) => {
+            // Check if we're not hovering over the parent element
+            if (!subpart.contains(e.relatedTarget) && !subpartBtn.classList.contains('bookmarked')) {
                 subpartBtn.style.opacity = '0';
             }
         });
@@ -198,7 +245,7 @@ function injectSubpartBookmarks(message) {
                 });
             } else {
                 subpartBtn.classList.remove('bookmarked');
-                subpartBtn.style.opacity = '0.7';  // Keep visible while hovering
+                subpartBtn.style.opacity = '0';
                 
                 // Remove from bookmarks
                 bookmarks = bookmarks.filter(b => b.element !== subpart);
@@ -279,6 +326,7 @@ function createNavigationPanel() {
         });
         // Clear bookmarks array
         bookmarks = [];
+        resetStuckHighlights();
         updateNavigationPanel();
     });
 
@@ -386,7 +434,7 @@ function createNavigationPanel() {
 
     const emptyState = document.createElement('div');
         emptyState.className = 'empty-state';
-        emptyState.textContent = 'No bookmarks yet. Click the 🔖 icon to add bookmarks.';
+        emptyState.textContent = 'No bookmarks yet. Click the icon to add bookmarks!';
         emptyState.style.marginTop = '0px';
         emptyState.style.textAlign = 'center';
         emptyState.style.height = '10px'
@@ -462,6 +510,7 @@ function updateNavigationPanel() {
         // Attach an event listener to the "Clear All" button
         clearAllBtn.addEventListener('click', () => {
             bookmarks = []; // Clear the bookmarks array
+            resetStuckHighlights(); // Reset any stuck highlights
             updateNavigationPanel(); // Update the panel after clearing the bookmarks
         });
     }
@@ -472,7 +521,7 @@ function updateNavigationPanel() {
     if (bookmarks.length === 0) {
         const emptyState = document.createElement('div');
         emptyState.className = 'empty-state';
-        emptyState.textContent = 'No bookmarks yet. Click the 🔖 icon to add bookmarks.';
+        emptyState.textContent = 'No bookmarks yet. Click the icon to add bookmarks!';
         emptyState.style.marginTop = '0px';
         emptyState.style.textAlign = 'center';
         emptyState.style.height = '10px'
@@ -549,9 +598,20 @@ function createBookmarkItem(container, bookmark, index, isChild = false) {
         // Flash effect instead of sustained highlight
         const originalBackground = bookmark.element.style.background;
         bookmark.element.style.background = 'rgba(16, 163, 127, 0.2)';
+        
+        // Ensure the background is reset after the flash
         setTimeout(() => {
-            bookmark.element.style.background = originalBackground;
+            if (bookmark.element) {
+                bookmark.element.style.background = originalBackground || '';
+            }
         }, 800); // shorter flash duration
+        
+        // Add a backup reset in case the first one fails
+        setTimeout(() => {
+            if (bookmark.element && bookmark.element.style.background === 'rgba(16, 163, 127, 0.2)') {
+                bookmark.element.style.background = originalBackground || '';
+            }
+        }, 1000);
     });
 
     // Create edit (pencil) button
@@ -632,6 +692,9 @@ async function init() {
 
         // Initial injection of bookmark buttons
         injectBookmarkButtons();
+        
+        // Reset any stuck highlights from previous sessions
+        resetStuckHighlights();
 
         // Set up observer for new messages
         const observer = new MutationObserver((mutations) => {
