@@ -264,7 +264,7 @@ function createNavigationPanel() {
             el.style.display = isCollapsed ? 'none' : 'block';
         });
         if (isCollapsed) {
-            panel.style.height = header.offsetHeight + 'px';
+            panel.style.height = '63px';
         } else {
             panel.style.height = 'auto';
         }
@@ -382,6 +382,17 @@ function createNavigationPanel() {
         panel.style.height = state.height + 'px';
         panel.style.right = 'auto';
     }
+
+    const emptyState = document.createElement('div');
+        emptyState.className = 'empty-state';
+        emptyState.textContent = 'No bookmarks yet. Click the 🔖 icon to add bookmarks.';
+        emptyState.style.marginTop = '0px';
+        emptyState.style.textAlign = 'center';
+        emptyState.style.height = '10px'
+        emptyState.style.color = '#9ca3af';
+        emptyState.style.fontStyle = 'italic';
+    
+        bookmarkList.appendChild(emptyState); // attach to bookmarkList instead
 
     return panel;
 }
