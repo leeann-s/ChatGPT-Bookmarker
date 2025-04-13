@@ -128,15 +128,15 @@ div[class*="prose"] > table:first-child .subpart-bookmark-btn {
     position: fixed;
     right: 20px;
     top: 40px;
-    background: white;
-    border: 1px solid #e5e7eb;
+    background: #212121;
+    border: 1px solid #4b5563;
     border-radius: 6px;
     padding: 8px;
     width: 180px;
     min-width: 150px;
     min-height: 100px;
     max-height: 80vh;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
     z-index: 10000;
     font-size: 13px;
     display: flex;
@@ -145,12 +145,12 @@ div[class*="prose"] > table:first-child .subpart-bookmark-btn {
 
 .bookmark-nav-header {
     padding: 8px;
-    background: #f3f4f6;
-    border-bottom: 1px solid #e5e7eb;
+    background: #2d2d2d;
+    border-bottom: 1px solid #4b5563;
     cursor: grab;
     user-select: none;
     display: flex;
-    color: black;
+    color: #ECECF1;
     justify-content: space-between;
     align-items: center;
 }
@@ -161,26 +161,28 @@ div[class*="prose"] > table:first-child .subpart-bookmark-btn {
     cursor: pointer;
     padding: 0 4px;
     font-size: 12px;
+    color: #ECECF1;
 }
 
 .bookmark-actions {
     padding: 8px 0;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #4b5563;
     display: flex;
     justify-content: flex-end;
 }
 
 .delete-all-btn {
-    border: 2px solid black;
-    color: black;
+    border: 2px solid #ECECF1;
+    color: #ECECF1;
     padding: 4px 8px;
     border-radius: 4px;
     cursor: pointer;
     font-size: 12px;
+    background: transparent;
 }
 
 .delete-all-btn:hover {
-    background: #e3e3e3;    
+    background: #2d2d2d;    
 }
 
 .bookmark-list {
@@ -196,7 +198,7 @@ div[class*="prose"] > table:first-child .subpart-bookmark-btn {
 }
 
 .bookmark-item {
-    color: black;
+    color: #ECECF1;
     padding: 6px 8px;
     margin-bottom: 4px;
     border-radius: 4px;
@@ -204,7 +206,7 @@ div[class*="prose"] > table:first-child .subpart-bookmark-btn {
 }
 
 .bookmark-item:hover {
-    background-color: #f3f4f6;
+    background-color: #2d2d2d;
 }
 
 .resize-handle {
@@ -214,7 +216,7 @@ div[class*="prose"] > table:first-child .subpart-bookmark-btn {
     width: 15px;
     height: 15px;
     cursor: se-resize;
-    background: linear-gradient(135deg, transparent 50%, #e5e7eb 50%);
+    background: linear-gradient(135deg, transparent 50%, #4b5563 50%);
 }
 
 /* New scrollable container styles */
@@ -223,7 +225,7 @@ div[class*="prose"] > table:first-child .subpart-bookmark-btn {
     max-height: 400px;
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: #cbd5e1 #f1f5f9;
+    scrollbar-color: #4b5563 #343541;
 }
 
 /* Webkit scrollbar styles */
@@ -232,12 +234,12 @@ div[class*="prose"] > table:first-child .subpart-bookmark-btn {
 }
 
 .bookmark-scroller::-webkit-scrollbar-track {
-    background: #f1f5f9;
+    background: #212121;
     border-radius: 3px;
 }
 
 .bookmark-scroller::-webkit-scrollbar-thumb {
-    background-color: #cbd5e1;
+    background-color: #4b5563;
     border-radius: 3px;
     margin-top: 8px;
 }
@@ -247,12 +249,13 @@ div[class*="prose"] > table:first-child .subpart-bookmark-btn {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    color: #ECECF1;
 }
 
 .child-bookmark {
     margin-bottom: 4px;
-    border-color: #e5e5e6;
-    background-color: #f9fafb;
+    border-color: #4b5563;
+    background-color: #2d2d2d;
 }
 
 .bookmark-edit-btn {
@@ -264,6 +267,7 @@ div[class*="prose"] > table:first-child .subpart-bookmark-btn {
     background: transparent;
     opacity: 0.6;
     transition: opacity 0.2s;
+    color: #ECECF1;
 }
 
 .bookmark-edit-btn:hover {
@@ -275,27 +279,27 @@ div[class*="prose"] > table:first-child .subpart-bookmark-btn {
 }
 
 .empty-state {
-    color: #6b7280;
+    color: #9ca3af;
     text-align: center;
     padding: 16px 0;
     font-size: 13px;
 }
 
 .collapse-button:hover {
-    color: black;
+    color: #10a37f;
 }
 
 .clear-all-btn {
-    color: black;
+    color: #ECECF1;
 }
 
 .clear-all-btn:hover {
-    background-color: #e5e7eb;
+    background-color: #444654;
     color: #ef4444;
 }
 
 /* Resize handle style */
 .bookmark-navigation-panel::-webkit-resizer {
-    background-color: #e5e7eb;
+    background-color: #4b5563;
     padding: 4px;
 }
