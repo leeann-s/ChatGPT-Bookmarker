@@ -8,11 +8,12 @@ Therefore, our team decided to create a web extension-- named ChatGPT Bookmarker
 
 ## Features:
 
-Collapsible bookmark list
-Draggable and resizable panel for ease of use
-Ability to bookmark sub-parts of messages
-Renaming and removing bookmarks
-How we built it
+- Collapsible bookmark list
+- Draggable and resizable panel for ease of use
+- Ability to bookmark sub-parts of messages
+- Renaming and removing bookmarks
+
+## How we built it
 We created a manifest.json file to make it a Chrome extension. Then, we created a bookmark by using a popup, that asked for our permission to activate the bookmark. We could add to the bookmark by clicking an add button. To do this, we created Javascript files. We used MutationObservers to tell when ChatGPT generated new messages by recognizing DOM changes, which let us hover over the text to get the bookmark icon. We stored the bookmarks in chrome.storage.local from the Chrome Storage API that lets the user go back to saved messages. We created icons on Canva to match which the aesthetics of ChatGPT.
 
 ## Challenges we ran into
