@@ -338,6 +338,7 @@ collapseBtn.addEventListener('click', () => {
         // Shrink panel to fit header only
         panel.style.height = header.offsetHeight + 15 + 'px';
         panel.style.minHeight = '0';
+        panel.style.width = panel.style.minWidth;
         panel.style.overflow = 'hidden';
     } else {
         // Show everything again
