@@ -234,6 +234,7 @@ function createNavigationPanel() {
     actions.className = 'bookmark-actions';
     const deleteAllBtn = document.createElement('button');
     deleteAllBtn.className = 'delete-all-btn';
+    //deleteAllBtn.height = isCollapsed ? '0px' : 'auto';
     deleteAllBtn.textContent = 'Delete All';
     actions.appendChild(deleteAllBtn);
     
@@ -264,7 +265,7 @@ function createNavigationPanel() {
             el.style.display = isCollapsed ? 'none' : 'block';
         });
         if (isCollapsed) {
-            panel.style.height = '63px';
+            panel.style.height = '100px';
         } else {
             panel.style.height = 'auto';
         }
