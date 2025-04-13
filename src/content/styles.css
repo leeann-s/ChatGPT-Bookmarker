@@ -93,9 +93,8 @@ table:hover .subpart-bookmark-btn {
 }
 
 .delete-all-btn {
-    background: #ef4444;
-    color: white;
-    border: none;
+    border: 2px solid black;
+    color: black;
     padding: 4px 8px;
     border-radius: 4px;
     cursor: pointer;
@@ -103,7 +102,7 @@ table:hover .subpart-bookmark-btn {
 }
 
 .delete-all-btn:hover {
-    background: #dc2626;
+    background: #e3e3e3;    
 }
 
 .bookmark-list {
