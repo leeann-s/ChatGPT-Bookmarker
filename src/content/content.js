@@ -289,7 +289,8 @@ collapseBtn.addEventListener('click', () => {
         bookmarkList.style.display = 'none';
 
         // Shrink panel to fit header only
-        panel.style.height = header.offsetHeight + 'px';
+        panel.style.height = header.offsetHeight + 15 + 'px';
+        panel.style.minHeight = '0';
         panel.style.overflow = 'hidden';
     } else {
         // Show everything again
