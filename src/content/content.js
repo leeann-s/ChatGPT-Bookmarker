@@ -253,23 +253,57 @@ function createNavigationPanel() {
     panel.appendChild(resizeHandle);
     document.body.appendChild(panel);
 
-    // Collapse functionality
-    let isCollapsed = false;
-    const collapseBtn = header.querySelector('.collapse-button');
-    const contentToToggle = [actions, bookmarkList];
 
-    collapseBtn.addEventListener('click', () => {
-        isCollapsed = !isCollapsed;
-        collapseBtn.textContent = isCollapsed ? '▲' : '▼';
-        contentToToggle.forEach(el => {
-            el.style.display = isCollapsed ? 'none' : 'block';
-        });
-        if (isCollapsed) {
-            panel.style.height = '100px';
-        } else {
-            panel.style.height = 'auto';
-        }
-    });
+// Collapse functionality
+let isCollapsed = false;
+const collapseBtn = header.querySelector('.collapse-button');
+const contentToToggle = [actions, bookmarkList];
+
+// Store original styles to restore them when expanding
+const originalStyles = {
+    panel: {
+        height: panel.style.height || 'auto'
+    },
+    actions: {
+        display: actions.style.display || 'block',
+        height: actions.style.height || '',
+        margin: actions.style.margin || '',
+        padding: actions.style.padding || ''
+    },
+    bookmarkList: {
+        display: bookmarkList.style.display || 'block',
+        height: bookmarkList.style.height || '',
+        margin: bookmarkList.style.margin || '',
+        padding: bookmarkList.style.padding || ''
+    }
+};
+
+collapseBtn.addEventListener('click', () => {
+    isCollapsed = !isCollapsed;
+    collapseBtn.textContent = isCollapsed ? '▲' : '▼';
+    collapseBtn.title = isCollapsed ? 'expand' : 'collapse';
+
+    if (isCollapsed) {
+        // Hide content areas
+        actions.style.display = 'none';
+        bookmarkList.style.display = 'none';
+
+        // Shrink panel to fit header only
+        panel.style.height = header.offsetHeight + 'px';
+        panel.style.overflow = 'hidden';
+    } else {
+        // Show everything again
+        actions.style.display = '';
+        bookmarkList.style.display = '';
+
+        panel.style.height = '';
+        panel.style.padding = '';
+        panel.style.overflow = '';
+
+        updateNavigationPanel();
+    }
+});
+
 
     // Delete all functionality
     deleteAllBtn.addEventListener('click', () => {
@@ -385,13 +419,14 @@ function createNavigationPanel() {
     }
 
     const emptyState = document.createElement('div');
-        emptyState.className = 'empty-state';
-        emptyState.textContent = 'No bookmarks yet. Click the 🔖 icon to add bookmarks.';
-        emptyState.style.marginTop = '0px';
-        emptyState.style.textAlign = 'center';
-        emptyState.style.height = '10px'
-        emptyState.style.color = '#9ca3af';
-        emptyState.style.fontStyle = 'italic';
+    emptyState.className = 'empty-state';
+    emptyState.textContent = 'No bookmarks yet. Click the 🔖 icon to add bookmarks.';
+    emptyState.style.margin = '0';
+    emptyState.style.padding = '0';
+    emptyState.style.textAlign = 'center';
+    emptyState.style.color = '#9ca3af';
+    emptyState.style.fontStyle = 'italic';
+    //emptyState.style.display = isCollapsed ? 'none' : 'block'; // Hide if collapsed initially
     
         bookmarkList.appendChild(emptyState); // attach to bookmarkList instead
 
