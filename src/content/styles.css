@@ -1,33 +1,64 @@
+.chatgpt-bookmark-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    z-index: 1000;
+    padding: 4px;
+    width: 24px;
+    height: 24px;
+    background-image: url('chrome-extension://__MSG_@@extension_id__/src/assets/icons/bookmark.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 4px;
+    position: absolute;
+    right: -10px;
+    top: 0;
+}
+
+.chatgpt-bookmark-btn:hover {
+    background-color: #303030;
+}
+
 .chatgpt-bookmark-btn.bookmarked {
-    opacity: 1;
-    color: #2563eb;
-    color: #10a37f;
+    background-image: url('chrome-extension://__MSG_@@extension_id__/src/assets/icons/bookmark_filled.png');
 }
 
 /* Styles for subpart bookmarks */
 .subpart-bookmark-btn {
     background: none;
     border: none;
-    font-size: 16px;
     cursor: pointer;
-    transition: opacity 0.2s, color 0.2s;
+    transition: all 0.2s ease-in-out;
     z-index: 9999;
     pointer-events: auto;
+    width: 20px;
+    height: 20px;
+    background-image: url('chrome-extension://__MSG_@@extension_id__/src/assets/icons/bookmark.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    right: -30px;
+    top: 0;
+    padding: 2px;
+    opacity: 0;
+    border-radius: 4px;
+}
+
+.subpart-bookmark-btn:hover {
+    background-color: #303030;
 }
 
 .subpart-bookmark-btn.bookmarked {
     opacity: 1 !important;
-    color: #10a37f;
+    background-image: url('chrome-extension://__MSG_@@extension_id__/src/assets/icons/bookmark_filled.png');
 }
 
 /* Remove outline on hover - only show bookmark icon */
 p, ul, ol, pre, blockquote, h1, h2, h3, h4, h5, h6, table {
     position: relative !important;
-}
-
-/* Hide bookmark icons by default */
-.subpart-bookmark-btn {
-    opacity: 0;
 }
 
 /* Show bookmark icons on hover */
@@ -44,6 +75,42 @@ h5:hover .subpart-bookmark-btn,
 h6:hover .subpart-bookmark-btn,
 table:hover .subpart-bookmark-btn {
     opacity: 0.7;
+}
+
+/* Prevent hover effect when bookmark is already visible */
+.subpart-bookmark-btn:hover,
+.subpart-bookmark-btn.bookmarked {
+    opacity: 1 !important;
+}
+
+/* Ensure bookmark container doesn't have subpart bookmarks */
+.bookmark-container {
+    position: absolute;
+    right: -10px;
+    top: 0;
+    padding: 8px;
+    z-index: 1000;
+    pointer-events: auto;
+}
+
+.bookmark-container .subpart-bookmark-btn {
+    display: none !important;
+}
+
+/* Prevent subpart bookmarks from appearing near the main bookmark */
+div[class*="prose"] > p:first-child .subpart-bookmark-btn,
+div[class*="prose"] > ul:first-child .subpart-bookmark-btn,
+div[class*="prose"] > ol:first-child .subpart-bookmark-btn,
+div[class*="prose"] > pre:first-child .subpart-bookmark-btn,
+div[class*="prose"] > blockquote:first-child .subpart-bookmark-btn,
+div[class*="prose"] > h1:first-child .subpart-bookmark-btn,
+div[class*="prose"] > h2:first-child .subpart-bookmark-btn,
+div[class*="prose"] > h3:first-child .subpart-bookmark-btn,
+div[class*="prose"] > h4:first-child .subpart-bookmark-btn,
+div[class*="prose"] > h5:first-child .subpart-bookmark-btn,
+div[class*="prose"] > h6:first-child .subpart-bookmark-btn,
+div[class*="prose"] > table:first-child .subpart-bookmark-btn {
+    display: none !important;
 }
 
 .bookmark-navigation-panel {
