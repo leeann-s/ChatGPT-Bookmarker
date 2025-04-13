@@ -112,6 +112,12 @@ table:hover .subpart-bookmark-btn {
     padding: 8px 0;
 }
 
+.bookmark-actions {
+    display: flex;
+    justify-content: flex-start;
+    padding: 8px;
+}
+
 .bookmark-item {
     color: black;
     padding: 6px 8px;
