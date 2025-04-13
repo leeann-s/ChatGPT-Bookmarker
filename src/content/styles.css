@@ -7,23 +7,43 @@
     padding: 4px;
     width: 24px;
     height: 24px;
-    background-image: url('chrome-extension://__MSG_@@extension_id__/src/assets/icons/bookmark_dark.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     border-radius: 4px;
     position: absolute;
-    right: -14px;
+    right: -10px;
     top: 0;
 }
 
+/* Hover stays the same */
 .chatgpt-bookmark-btn:hover {
-    background-color: #303030;
+    background-color: #7b7b7b;
 }
 
-.chatgpt-bookmark-btn.bookmarked {
-    background-image: url('chrome-extension://__MSG_@@extension_id__/src/assets/icons/bookmark_filled_dark.png');
-}
+/* LIGHT MODE */
+:root[data-theme="light"] {
+    --bookmark-img: url('chrome-extension://__MSG_@@extension_id__/src/assets/icons/bookmark.png');
+    --bookmark-filled-img: url('chrome-extension://__MSG_@@extension_id__/src/assets/icons/bookmark_filled.png');
+  }
+  
+  :root[data-theme="dark"] {
+    --bookmark-img: url('chrome-extension://__MSG_@@extension_id__/src/assets/icons/bookmark_dark.png');
+    --bookmark-filled-img: url('chrome-extension://__MSG_@@extension_id__/src/assets/icons/bookmark_filled_dark.png');
+  }
+  
+  .chatgpt-bookmark-btn {
+    background-image: var(--bookmark-img);
+  }
+  
+  .chatgpt-bookmark-btn.bookmarked {
+    background-image: var(--bookmark-filled-img);
+  }
+  
+  /* Your other element HIII that should share the same image: */
+  .subpart {
+    background-image: var(--bookmark-img);
+  }
 
 /* Styles for subpart bookmarks */
 .subpart-bookmark-btn {
@@ -35,12 +55,11 @@
     pointer-events: auto;
     width: 20px;
     height: 20px;
-    background-image: url('chrome-extension://__MSG_@@extension_id__/src/assets/icons/bookmark_dark.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     position: absolute;
-    right: -20px;
+    right: -30px;
     top: 0;
     padding: 2px;
     opacity: 0;
