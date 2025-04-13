@@ -110,14 +110,14 @@ function injectBookmarkButtons() {
                     element: message,
                     position: message.offsetTop,
                     text: questionPreview,
-                    customName: questionPreview, // Add customName property
-                    type: 'full'  // Mark as full message bookmark
+                    customName: questionPreview,
+                    type: 'full'
                 });
 
             } else {
                 bookmarkBtn.classList.remove('bookmarked');
-                // Remove this full message bookmark and any subpart bookmarks from this message
-                bookmarks = bookmarks.filter(b => !(b.element === message || (b.parentMessage && b.parentMessage === message)));
+                // Remove only this full message bookmark, keep subpart bookmarks
+                bookmarks = bookmarks.filter(b => b.element !== message);
             }
 
             updateNavigationPanel();
@@ -234,24 +234,29 @@ function injectSubpartBookmarks(message) {
                     ? subpartText.substring(0, 50) + '...' 
                     : subpartText;
                 
-                // Add to bookmarks
-                bookmarks.push({
-                    element: subpart,
-                    parentMessage: message,  // Track parent message for better organization
-                    position: subpart.offsetTop,
-                    text: subpartPreview,
-                    customName: subpartPreview,
-                    type: 'subpart'  // Mark as subpart bookmark
-                });
+                // Check if this subpart is already bookmarked
+                const existingBookmark = bookmarks.find(b => b.element === subpart);
+                if (!existingBookmark) {
+                    // Add to bookmarks only if it doesn't exist
+                    bookmarks.push({
+                        element: subpart,
+                        parentMessage: message,
+                        position: subpart.offsetTop,
+                        text: subpartPreview,
+                        customName: subpartPreview,
+                        type: 'subpart'
+                    });
+                    
+                    updateNavigationPanel();
+                }
             } else {
                 subpartBtn.classList.remove('bookmarked');
                 subpartBtn.style.opacity = '0';
                 
                 // Remove from bookmarks
                 bookmarks = bookmarks.filter(b => b.element !== subpart);
+                updateNavigationPanel();
             }
-            
-            updateNavigationPanel();
         });
         
         // Add to DOM
@@ -525,7 +530,23 @@ function groupBookmarksByParent() {
         }
     });
     
-    return groups;
+    // Remove any duplicate parent bookmarks
+    const seenParents = new Set();
+    return groups.filter(group => {
+        if (!group.isGroup) {
+            // For standalone bookmarks, check if it's a parent that's already in a group
+            if (group.bookmark.type === 'full') {
+                const isParentInGroup = groups.some(g => 
+                    g.isGroup && g.parentBookmark === group.bookmark
+                );
+                
+                if (isParentInGroup) {
+                    return false; // Skip this standalone parent as it's already in a group
+                }
+            }
+        }
+        return true;
+    });
 }
 
 // Update navigation panel
@@ -617,12 +638,18 @@ function createBookmarkItem(container, bookmark, index, isChild = false) {
     if (isChild) {
         bookmarkItem.style.fontSize = '0.9em';
         bookmarkItem.style.marginTop = '4px';
+    } else if (bookmark.type === 'subpart') {
+        // Style for standalone subpart bookmarks
+        bookmarkItem.style.fontSize = '0.9em';
+        bookmarkItem.style.marginTop = '4px';
+        bookmarkItem.style.borderLeft = '2px solid #e5e7eb';
+        bookmarkItem.style.paddingLeft = '25px';
     }
 
     // Create the text display element
     const textSpan = document.createElement('span');
     textSpan.className = 'bookmark-text';
-    const prefix = isChild ? '↳ ' : `${index + 1}. `;
+    const prefix = isChild ? '↳ ' : (bookmark.type === 'subpart' ? '• ' : `${index + 1}. `);
     textSpan.textContent = `${prefix}${bookmark.customName || bookmark.text}`;
     textSpan.style.cursor = 'pointer';
     textSpan.style.flex = '1';
@@ -666,14 +693,166 @@ function createBookmarkItem(container, bookmark, index, isChild = false) {
     editBtn.addEventListener('click', (e) => {
         e.stopPropagation();
 
-        // Create input field for renaming
-        const newName = prompt('Enter new name for this bookmark:', bookmark.customName || bookmark.text);
+        // Create modal overlay
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'bookmark-edit-modal-overlay';
+        modalOverlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        `;
 
-        // Update if not cancelled and not empty
-        if (newName !== null && newName.trim() !== '') {
-            bookmark.customName = newName.trim();
-            updateNavigationPanel();
-        }
+        // Create modal
+        const modal = document.createElement('div');
+        modal.className = 'bookmark-edit-modal';
+        modal.style.cssText = `
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            position: relative;
+        `;
+
+        // Create title
+        const title = document.createElement('h3');
+        title.textContent = 'Edit Bookmark Name';
+        title.style.cssText = `
+            margin: 0 0 15px 0;
+            color: #374151;
+            font-size: 16px;
+            font-weight: 600;
+        `;
+
+        // Create input
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = bookmark.customName || bookmark.text;
+        input.style.cssText = `
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            outline: none;
+            caret-color: #10a37f;
+            background: white;
+            color: #374151;
+        `;
+
+        // Add focus styles
+        input.addEventListener('focus', () => {
+            input.style.borderColor = '#10a37f';
+            input.style.boxShadow = '0 0 0 1px #10a37f';
+        });
+
+        input.addEventListener('blur', () => {
+            input.style.borderColor = '#e5e7eb';
+            input.style.boxShadow = 'none';
+        });
+
+        // Create buttons container
+        const buttonsContainer = document.createElement('div');
+        buttonsContainer.style.cssText = `
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        `;
+
+        // Create cancel button
+        const cancelBtn = document.createElement('button');
+        cancelBtn.textContent = 'Cancel';
+        cancelBtn.style.cssText = `
+            padding: 6px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            background: white;
+            color: #374151;
+            cursor: pointer;
+            font-size: 14px;
+        `;
+
+        // Create save button
+        const saveBtn = document.createElement('button');
+        saveBtn.textContent = 'Save';
+        saveBtn.style.cssText = `
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            background: #10a37f;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        `;
+
+        // Add hover effects
+        cancelBtn.addEventListener('mouseover', () => {
+            cancelBtn.style.background = '#f3f4f6';
+        });
+        cancelBtn.addEventListener('mouseout', () => {
+            cancelBtn.style.background = 'white';
+        });
+        saveBtn.addEventListener('mouseover', () => {
+            saveBtn.style.background = '#0d8c6d';
+        });
+        saveBtn.addEventListener('mouseout', () => {
+            saveBtn.style.background = '#10a37f';
+        });
+
+        // Add event listeners
+        cancelBtn.addEventListener('click', () => {
+            document.body.removeChild(modalOverlay);
+        });
+
+        saveBtn.addEventListener('click', () => {
+            const newName = input.value.trim();
+            if (newName) {
+                bookmark.customName = newName;
+                updateNavigationPanel();
+            }
+            document.body.removeChild(modalOverlay);
+        });
+
+        // Close on overlay click
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                document.body.removeChild(modalOverlay);
+            }
+        });
+
+        // Handle Enter key
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const newName = input.value.trim();
+                if (newName) {
+                    bookmark.customName = newName;
+                    updateNavigationPanel();
+                }
+                document.body.removeChild(modalOverlay);
+            }
+        });
+
+        // Assemble modal
+        buttonsContainer.appendChild(cancelBtn);
+        buttonsContainer.appendChild(saveBtn);
+        modal.appendChild(title);
+        modal.appendChild(input);
+        modal.appendChild(buttonsContainer);
+        modalOverlay.appendChild(modal);
+        document.body.appendChild(modalOverlay);
+
+        // Focus input
+        input.focus();
+        input.select();
     });
 
     // Remove bookmark button
