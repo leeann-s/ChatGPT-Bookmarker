@@ -900,7 +900,7 @@ async function init() {
     console.log('ChatGPT Bookmarker initializing...');
 
     try {
-        // Wait for the main chat container
+        // Wait for the main chat container blah
         await waitForElement('div[class*="prose"]');
 
         // Create navigation panel
