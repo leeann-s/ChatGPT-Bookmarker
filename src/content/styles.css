@@ -12,38 +12,29 @@
     background-position: center;
     border-radius: 4px;
     position: absolute;
-    right: -10px;
+    right: -14px;
     top: 0;
+    background-image: url('chrome-extension://__MSG_@@extension_id__/src/assets/icons/bookmark_dark.png');
 }
 
 /* Hover stays the same */
 .chatgpt-bookmark-btn:hover {
-    background-color: #7b7b7b;
+    background-color: #303030;
 }
 
-/* LIGHT MODE */
-:root[data-theme="light"] {
-    --bookmark-img: url('chrome-extension://__MSG_@@extension_id__/src/assets/icons/bookmark.png');
-    --bookmark-filled-img: url('chrome-extension://__MSG_@@extension_id__/src/assets/icons/bookmark_filled.png');
-  }
+/* Remove theme-specific CSS variables since we're not using them */
+:root[data-theme="light"], :root[data-theme="dark"] {
+    /* Empty to remove theme variables */
+}
   
-  :root[data-theme="dark"] {
-    --bookmark-img: url('chrome-extension://__MSG_@@extension_id__/src/assets/icons/bookmark_dark.png');
-    --bookmark-filled-img: url('chrome-extension://__MSG_@@extension_id__/src/assets/icons/bookmark_filled_dark.png');
-  }
+.chatgpt-bookmark-btn.bookmarked {
+    background-image: url('chrome-extension://__MSG_@@extension_id__/src/assets/icons/bookmark_filled_dark.png');
+}
   
-  .chatgpt-bookmark-btn {
-    background-image: var(--bookmark-img);
-  }
-  
-  .chatgpt-bookmark-btn.bookmarked {
-    background-image: var(--bookmark-filled-img);
-  }
-  
-  /* Your other element HIII that should share the same image: */
-  .subpart {
-    background-image: var(--bookmark-img);
-  }
+/* Your other element that should share the same image: */
+.subpart {
+    background-image: url('chrome-extension://__MSG_@@extension_id__/src/assets/icons/bookmark_dark.png');
+}
 
 /* Styles for subpart bookmarks */
 .subpart-bookmark-btn {
@@ -59,11 +50,12 @@
     background-repeat: no-repeat;
     background-position: center;
     position: absolute;
-    right: -30px;
+    right: -20px;
     top: 0;
     padding: 2px;
     opacity: 0;
     border-radius: 4px;
+    background-image: url('chrome-extension://__MSG_@@extension_id__/src/assets/icons/bookmark_dark.png');
 }
 
 .subpart-bookmark-btn:hover {
