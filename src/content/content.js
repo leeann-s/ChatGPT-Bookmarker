@@ -442,7 +442,7 @@ collapseBtn.addEventListener('click', () => {
         const actionsHeight = actions.offsetHeight;
         const visibleBookmarksHeight = Array.from(bookmarkList.children)
             .reduce((total, item) => total + item.offsetHeight, 0);
-        const minContentHeight = 200;
+        const minContentHeight = 140;
 
         // Enforce minimum and maximum sizes
         const newWidth = Math.max(150, Math.min(width, window.innerWidth - panel.offsetLeft));
