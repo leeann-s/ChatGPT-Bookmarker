@@ -372,8 +372,6 @@ collapseBtn.addEventListener('click', () => {
         bookmarks = [];
         resetStuckHighlights();
         updateNavigationPanel();
-
-        
         
     });
 
@@ -444,7 +442,7 @@ collapseBtn.addEventListener('click', () => {
         const actionsHeight = actions.offsetHeight;
         const visibleBookmarksHeight = Array.from(bookmarkList.children)
             .reduce((total, item) => total + item.offsetHeight, 0);
-        const minContentHeight = headerHeight + actionsHeight + visibleBookmarksHeight;
+        const minContentHeight = 200;
 
         // Enforce minimum and maximum sizes
         const newWidth = Math.max(150, Math.min(width, window.innerWidth - panel.offsetLeft));
