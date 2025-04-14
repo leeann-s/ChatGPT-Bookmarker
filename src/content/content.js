@@ -365,10 +365,16 @@ collapseBtn.addEventListener('click', () => {
         document.querySelectorAll('.chatgpt-bookmark-btn.bookmarked').forEach(btn => {
             btn.classList.remove('bookmarked');
         });
+        document.querySelectorAll('.subpart-bookmark-btn.bookmarked').forEach(btn => {
+            btn.classList.remove('bookmarked');
+        });
         // Clear bookmarks array
         bookmarks = [];
         resetStuckHighlights();
         updateNavigationPanel();
+
+        
+        
     });
 
     // Dragging functionality
